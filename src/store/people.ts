@@ -1,4 +1,7 @@
 import type { AppGraphData, Person } from '../types'
+import seedData from './seed-data.json'
+
+const LS_KEY = 'nyc-people-graph'
 
 const SELF_NODE: Person = {
   id: 'self',
@@ -10,63 +13,55 @@ const SELF_NODE: Person = {
   fy: 0,
 }
 
-export const SEED: AppGraphData = {
-  nodes: [
-    SELF_NODE,
-    { id: '1', name: 'Maya Chen', tags: ['friend'], notes: 'Met at a ceramics class. Makes pottery on weekends.' },
-    { id: '2', name: 'Jordan Price', tags: ['friend', 'colleague'], notes: 'Works at the same co-working space on Rivington.' },
-    { id: '3', name: 'Priya Sharma', tags: ['friend'], notes: 'College friend, moved to NYC last year. Into climbing.' },
-    { id: '4', name: 'Marcus Williams', tags: ['colleague'], notes: 'Met at a tech meetup in Midtown. Works in ML.' },
-    { id: '5', name: 'Sofia Russo', tags: ['acquaintance'], notes: 'Friend of a friend. Works in film production.' },
-    { id: '6', name: 'Alex Kim', tags: ['friend'], notes: 'Grew up together. Back in NYC after SF.' },
-    { id: '7', name: 'Nadia Hassan', tags: ['friend'], notes: 'Book club. Recommends everything.' },
-    { id: '8', name: 'Tom Rivera', tags: ['acquaintance'], notes: "Neighbor's friend. DJ, plays Output sometimes." },
-  ],
-  links: [
-    { source: 'self', target: '1' },
-    { source: 'self', target: '2' },
-    { source: 'self', target: '3' },
-    { source: 'self', target: '4' },
-    { source: 'self', target: '5' },
-    { source: 'self', target: '6' },
-    { source: 'self', target: '7' },
-    { source: 'self', target: '8' },
-    { source: '1', target: '2' },
-    { source: '1', target: '3' },
-    { source: '1', target: '7' },
-    { source: '2', target: '4' },
-    { source: '2', target: '5' },
-    { source: '3', target: '6' },
-    { source: '3', target: '7' },
-    { source: '5', target: '8' },
-  ],
-}
+export const SEED: AppGraphData = seedData as AppGraphData
 
 function normalizeSelf(data: AppGraphData): AppGraphData {
+  const hasOtherCenters = data.nodes.some((n) => n.isCenter)
   const selfIdx = data.nodes.findIndex((n) => n.isSelf)
   if (selfIdx === -1) {
     data.nodes.unshift(SELF_NODE)
   } else {
-    data.nodes[selfIdx] = { ...data.nodes[selfIdx], fx: 0, fy: 0 }
+    data.nodes[selfIdx] = {
+      ...data.nodes[selfIdx],
+      fx: hasOtherCenters ? null : 0,
+      fy: hasOtherCenters ? null : 0,
+    }
   }
   return data
 }
 
 export async function loadGraph(): Promise<AppGraphData> {
+  // Try file API (dev mode only)
   try {
     const res = await fetch('/api/graph')
-    if (!res.ok) return SEED
-    const data: AppGraphData = await res.json()
-    return normalizeSelf(data)
+    if (res.ok) {
+      const data: AppGraphData = await res.json()
+      return normalizeSelf(data)
+    }
   } catch {
-    return SEED
+    // not available in production
   }
+  // Fall back to localStorage
+  const raw = localStorage.getItem(LS_KEY)
+  if (raw) {
+    try {
+      return normalizeSelf(JSON.parse(raw))
+    } catch {
+      // corrupted, use seed
+    }
+  }
+  return SEED
 }
 
 export async function saveGraph(data: AppGraphData): Promise<void> {
-  await fetch('/api/graph', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  })
+  localStorage.setItem(LS_KEY, JSON.stringify(data))
+  try {
+    await fetch('/api/graph', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+  } catch {
+    // not available in production, localStorage is enough
+  }
 }
