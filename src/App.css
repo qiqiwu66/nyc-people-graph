@@ -1,0 +1,221 @@
+/* ── Variables ── */
+:root {
+  --orange: #D97757;
+  --orange-light: #F5EDE8;
+  --orange-hover: #C4663F;
+  --bg: #FAF9F5;
+  --bg-panel: #FFFFFF;
+  --border: #E5E2DD;
+  --border-strong: #CCC9C3;
+  --text: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-muted: #9E9B96;
+}
+
+/* ── Layout ── */
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ── Topbar ── */
+.topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-left  { display: flex; align-items: center; gap: 10px; flex: 1; }
+.topbar-center { flex: 1; display: flex; justify-content: center; }
+.topbar-right { flex: 1; display: flex; justify-content: flex-end; }
+
+.app-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.search-input {
+  width: 280px;
+  padding: 7px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--orange); }
+.search-input::placeholder { color: var(--text-muted); }
+
+/* ── Graph container ── */
+.graph-container {
+  position: absolute;
+  top: 53px; left: 0; right: 0; bottom: 0;
+}
+
+/* ── Shared panel shell (used by Sidebar + AddPersonForm) ── */
+.sidebar {
+  position: absolute;
+  top: calc(53px + 12px);
+  right: 12px;
+  width: 310px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow-y: auto;
+  padding: 24px 20px;
+  z-index: 10;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
+  max-height: calc(100vh - 53px - 48px);
+  animation: slideIn 0.18s ease;
+}
+.sidebar-wide { width: 500px; }
+
+@keyframes slideIn {
+  from { transform: translateX(16px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+.sidebar-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.sidebar-close:hover { color: var(--text); background: var(--bg); }
+
+.sidebar-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+  cursor: text;
+}
+.sidebar-name-input {
+  width: 100%;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-family: inherit;
+  outline: none;
+  line-height: 1.25;
+}
+.sidebar-name-input:focus { border-color: var(--orange); }
+
+/* ── Shared buttons ── */
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--orange-hover); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-ghost {
+  background: none;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--border-strong); background: var(--bg); }
+
+.btn-danger {
+  width: 100%;
+  background: none;
+  color: #C0392B;
+  border: 1px solid #C0392B33;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-danger:hover { background: #C0392B0D; border-color: #C0392B66; }
+
+/* ── Shared form elements ── */
+.form-field { margin-bottom: 16px; }
+.form-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--text-muted);
+  margin-bottom: 7px;
+}
+.input {
+  width: 100%;
+  padding: 9px 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--orange); }
+.input::placeholder { color: var(--text-muted); }
+
+.form-actions { display: flex; gap: 10px; margin-top: 22px; }
+
+/* ── Shared tag styles ── */
+.tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.2px;
+}
+.tag-selector { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tag-btn:hover { border-color: var(--orange); color: var(--orange); }
+.tag-btn-active { background: var(--orange-light); border-color: var(--orange); color: var(--orange); }
