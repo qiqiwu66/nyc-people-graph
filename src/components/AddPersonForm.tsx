@@ -266,7 +266,7 @@ export function AddPersonForm({ people, centers, onAdd, onAddMultiple, onClose, 
   )
 }
 
-function ViaInput({ value, onChange, people }: { value: string; onChange: (v: string) => void; people: Person[] }) {
+function ViaInput({ value, onChange }: { value: string; onChange: (v: string) => void; people: Person[] }) {
   const inputRef = useRef<HTMLInputElement>(null)
   return (
     <div className="cell-dd cell-dd-via">

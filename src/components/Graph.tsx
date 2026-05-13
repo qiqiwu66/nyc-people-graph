@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
-import ForceGraph from 'force-graph'
+import ForceGraph_ from 'force-graph'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ForceGraph = (ForceGraph_ as any).default ?? ForceGraph_
 import type { ConnectorNode, Person, RenderGraphData, RenderNode } from '../types'
 
 const ORANGE = '#D97757'
